@@ -74,6 +74,7 @@ struct sway_output {
 	struct wl_event_source *repaint_timer;
 	bool gamma_lut_changed;
 	bool allow_tearing, enable_tearing;
+	uint32_t tearing_fail_count;
 };
 
 struct sway_output_non_desktop {

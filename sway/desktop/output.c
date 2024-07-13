@@ -292,14 +292,16 @@ static int output_repaint_timer_handler(void *data) {
 		}
 	}
 	
-	if (output->enable_tearing) {
+	if (output->enable_tearing && output->tearing_fail_count < 120) {
 		pending.tearing_page_flip = true;
 		
 		if (!wlr_output_test_state(output->wlr_output, &pending)) {
-			sway_log(SWAY_DEBUG, "Output test failed on '%s', retrying without tearing page-flip",
-				output->wlr_output->name);
-				
+			if (++output->tearing_fail_count >= 120) {
+				sway_log(SWAY_INFO, "Tearing failed for 120 consecutive frames, disabling");
+			}
 			pending.tearing_page_flip = false;
+		} else {
+			output->tearing_fail_count = 0;
 		}
 	}
 
